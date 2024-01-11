@@ -3,7 +3,7 @@ using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data;
+namespace Infrastructure.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
@@ -25,7 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                      .Cast<BaseEntity>()
                  )
             entity.LastModified = DateTime.UtcNow;
-
+    
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, token);
     }
 }

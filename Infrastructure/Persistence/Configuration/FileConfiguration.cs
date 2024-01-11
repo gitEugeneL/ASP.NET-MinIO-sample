@@ -2,13 +2,13 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Data.Configuration;
+namespace Infrastructure.Persistence.Configuration;
 
 public class FileConfiguration : IEntityTypeConfiguration<FileData>
 {
     public void Configure(EntityTypeBuilder<FileData> builder)
     {
-        builder.HasIndex(fd => fd.BucketName)
+        builder.HasIndex(fd => fd.FileName)
             .IsUnique();
         
         builder.Property(fd => fd.BucketName)
