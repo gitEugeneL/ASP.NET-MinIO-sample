@@ -24,13 +24,10 @@ public static class ConfigureServices
         /*** MinIO connection ***/
         services.AddMinio(options =>
         {
-            var acceskey = "BhNFKYG03CZ7xIPGOYxu";
-            var secretKey = "bsuI4s1VxWbTL0iu5TC8jhdZNcMXx7VBdxhj37Rt";
-            
             options.WithEndpoint(config.GetSection("MinIOConnection:Endpoint").Value);
             options.WithCredentials(
-                acceskey,
-                secretKey
+                config.GetSection("MinIOConnection:AccessKey").Value,
+                config.GetSection("MinIOConnection:SecretKey").Value
             );
             options.WithSSL(false);
             options.Build();

@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -12,5 +13,11 @@ internal class FileDataDataRepository(AppDbContext context) : IFileDataRepositor
             .AddAsync(fileData, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return fileData;
+    }
+
+    public async Task<FileData?> FindFileDataByFileName(string fileName, CancellationToken cancellationToken)
+    {
+        return await context.FileData
+            .FirstOrDefaultAsync(fd => fd.FileName == fileName.ToLower(), cancellationToken);
     }
 }

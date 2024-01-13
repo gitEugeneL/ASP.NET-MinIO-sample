@@ -20,17 +20,16 @@ public class FileController(ISender mediator) : ControllerBase
         if (file.ContentType is not ("image/png" or "image/jpeg"))
             return BadRequest("png or jpg");
         
-        var stream = file.OpenReadStream();
-        var length = stream.Length;
-        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-
-        if (length > 5242880) // 5 mb.
-            return BadRequest("5mb max.");
+        if (file.Length > 524288000) // 50 mb.
+            return BadRequest("50mb max.");
         
-        var result =await mediator.Send(new UploadFileCommand(stream, ext, length));
+        var stream = file.OpenReadStream();
+        var result = await mediator
+            .Send(new UploadFileCommand(stream, file.FileName, file.ContentType, file.Length));
         return Ok(result);
     }
     
-    // get all names
-    // get one file
+    // todo get all buckets
+    // todo get all names in bucket
+    // todo get one file
 }

@@ -10,16 +10,25 @@ public class UploadFileCommandHandler(IFileManager fileManager, IFileDataReposit
     public async Task<string> Handle(UploadFileCommand request, CancellationToken cancellationToken)
     {
         const string bucketName = "example-bucket";
-
+        
+        var fileName = request.FileName.ToLower();
+        var fileData = await fileDataRepository.FindFileDataByFileName(fileName, cancellationToken);
+        if (fileData is not null)
+        {
+            var ext = Path.GetExtension(fileData.FileName);
+            var name = Path.ChangeExtension(fileData.FileName, null);
+            var copy = 1;
+            do fileName = $"{name}({copy++}){ext}";
+            while (await fileDataRepository.FindFileDataByFileName(fileName, cancellationToken) is not null);
+        }
+        
         if (!await fileManager.BucketExists(bucketName))
             await fileManager.CreateBucket(bucketName);
         
-        var fileName = $"{Guid.NewGuid()}{request.FileType}";
-
         await fileManager
             .UploadFile(bucketName, fileName, request.FileType, request.FileLength, request.Stream);
 
-        var fileData = await fileDataRepository.CreateFileData(
+        var createdFileData = await fileDataRepository.CreateFileData(
             new FileData
             {
                 BucketName = bucketName,
@@ -30,6 +39,6 @@ public class UploadFileCommandHandler(IFileManager fileManager, IFileDataReposit
             cancellationToken
         );
 
-        return fileData.FileName;
+        return createdFileData.FileName;
     }
 }
