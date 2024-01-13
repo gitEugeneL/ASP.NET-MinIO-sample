@@ -33,4 +33,24 @@ internal class FileManager(IMinioClient client) : IFileManager
                 .WithContentType(fileType)
         );
     }
+
+    public async Task<MemoryStream> DownloadFile(string bucketName, string fileName)
+    {
+        var stream = new MemoryStream();
+        var tsc = new TaskCompletionSource<bool>();
+
+        var getObjectArgs = new GetObjectArgs()
+            .WithBucket(bucketName.ToLower())
+            .WithObject(fileName.ToLower())
+            .WithCallbackStream(cs =>
+            {
+                cs.CopyTo(stream);
+                tsc.SetResult(true);
+            });
+
+        await client.GetObjectAsync(getObjectArgs);
+        await tsc.Task;
+        stream.Seek(0, SeekOrigin.Begin);
+        return stream;
+    }
 }

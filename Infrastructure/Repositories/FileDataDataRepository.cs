@@ -20,4 +20,14 @@ internal class FileDataDataRepository(AppDbContext context) : IFileDataRepositor
         return await context.FileData
             .FirstOrDefaultAsync(fd => fd.FileName == fileName.ToLower(), cancellationToken);
     }
+
+    public async Task<FileData?> 
+        FindFileDataByFileNameAndBucketName(string bucketName, string fileName, CancellationToken cancellationToken)
+    {
+        return await context.FileData
+            .FirstOrDefaultAsync(
+                fd => fd.FileName == fileName.ToLower() 
+                      && fd.BucketName == bucketName.ToLower(), 
+                cancellationToken);
+    }
 }

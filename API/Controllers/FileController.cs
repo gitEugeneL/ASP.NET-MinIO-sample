@@ -1,3 +1,4 @@
+using Application.Files.Commands.DownloadFile;
 using Application.Files.Commands.UploadFile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,13 @@ public class FileController(ISender mediator) : ControllerBase
             .Send(new UploadFileCommand(stream, file.FileName, file.ContentType, file.Length));
         return Ok(result);
     }
+
+    [HttpGet("download")]
+    public async Task<ActionResult> Download([FromQuery] DownloadFileCommand command)
+    {
+        var result = await mediator.Send(command);
+        return File(result.MemoryStream, result.ContentType, result.FileName);
+    }
     
-    // todo get all buckets
     // todo get all names in bucket
-    // todo get one file
 }
