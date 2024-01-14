@@ -33,6 +33,11 @@ public static class ConfigureServices
             options.Build();
         });
         
+        /*** Upload develop database ***/
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            AppDbContextInitializer
+                .Init(services.BuildServiceProvider().GetRequiredService<AppDbContext>());
+        
         return services;
     }
 }

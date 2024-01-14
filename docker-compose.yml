@@ -11,6 +11,8 @@ services:
     environment:
       MINIO_ROOT_USER: dev_user
       MINIO_ROOT_PASSWORD: dev_password
+    networks:
+      - minio-sample
     volumes:
       - minio-storage:/data
 
@@ -23,11 +25,36 @@ services:
       POSTGRES_PASSWORD: dev_password
     ports:
       - "5432:5432"
+    networks:
+      - minio-sample
     volumes:
       - database:/var/lib/postgresql/data:rw
     depends_on: 
       - minio
+    
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+      - minio
+    networks:
+      - minio-sample
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
 volumes:
   minio-storage:
   database:
+    
+networks:
+  minio-sample:
+    driver: bridge
