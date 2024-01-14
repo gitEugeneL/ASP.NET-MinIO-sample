@@ -30,4 +30,18 @@ internal class FileDataDataRepository(AppDbContext context) : IFileDataRepositor
                       && fd.BucketName == bucketName.ToLower(), 
                 cancellationToken);
     }
+
+    public async Task<List<string>> FindNamesByBucket(string bucketName, CancellationToken cancellationToken)
+    {
+        return await context.FileData
+            .Where(fd => fd.BucketName == bucketName.ToLower())
+            .Select(fd => fd.FileName)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task DeleteFileData(FileData fileData, CancellationToken cancellationToken)
+    {
+        context.FileData.Remove(fileData);
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }

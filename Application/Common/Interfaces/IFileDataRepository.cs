@@ -10,4 +10,8 @@ public interface IFileDataRepository
     
     Task<FileData?> FindFileDataByFileNameAndBucketName(
         string bucketName, string fileName, CancellationToken cancellationToken);
+
+    Task<List<string>> FindNamesByBucket(string bucketName, CancellationToken cancellationToken);
+    
+    Task DeleteFileData(FileData fileData, CancellationToken cancellationToken);
 }

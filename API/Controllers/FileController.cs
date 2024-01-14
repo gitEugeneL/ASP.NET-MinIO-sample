@@ -1,5 +1,7 @@
+using Application.Files.Commands.DeleteFile;
 using Application.Files.Commands.DownloadFile;
 using Application.Files.Commands.UploadFile;
+using Application.Files.Queries.GetFiles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +38,18 @@ public class FileController(ISender mediator) : ControllerBase
         var result = await mediator.Send(command);
         return File(result.MemoryStream, result.ContentType, result.FileName);
     }
+
+    [HttpGet("{bucketName}")]
+    public async Task<ActionResult<List<string>>> GetAll(string bucketName)
+    {
+        var result = await mediator.Send(new GetFilesQuery(bucketName));
+        return Ok(result);
+    }
     
-    // todo get all names in bucket
+    [HttpDelete("delete/{bucketName}/{fileName}")]
+    public async Task<ActionResult> Delete(string bucketName, string fileName)
+    {
+        await mediator.Send(new DeleteFileCommand(bucketName, fileName));
+        return NoContent();
+    }
 }

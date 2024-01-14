@@ -53,4 +53,12 @@ internal class FileManager(IMinioClient client) : IFileManager
         stream.Seek(0, SeekOrigin.Begin);
         return stream;
     }
+
+    public async Task DeleteFile(string bucketName, string fileName)
+    {
+        await client.RemoveObjectAsync(new RemoveObjectArgs()
+            .WithBucket(bucketName.ToLower())
+            .WithObject(fileName.ToLower())
+        );
+    }
 }
