@@ -38,7 +38,8 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - "ASPNETCORE_ENVIRONMENT=Development"
+      - "ConnectionStrings__PSQL=Host=database;Port=5432;Database=dev_db;Username=dev_user;Password=dev_password;"    
     ports:
       - "8080:8080"
     depends_on:
